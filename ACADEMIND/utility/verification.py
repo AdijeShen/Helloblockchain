@@ -1,3 +1,4 @@
+"""Provides verification helper methods."""
 from ACADEMIND.utility.hash_util import hash_string_256, hash_block
 from ACADEMIND.transaction import Transaction
 

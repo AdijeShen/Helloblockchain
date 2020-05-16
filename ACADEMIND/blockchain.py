@@ -3,8 +3,6 @@ import json
 from ACADEMIND.utility.hash_util import hash_block
 from ACADEMIND.block import Block
 from ACADEMIND.transaction import Transaction
-
-# from time import time
 from ACADEMIND.utility.verification import Verification
 
 MINING_REWARD = 10.0
@@ -125,6 +123,8 @@ class Blockchain:
         #     'recipient': recipient,
         #     'amount': amount
         # }
+        if self.hosting_node is None:
+            return False
         transaction = Transaction(sender, recipient, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
@@ -134,6 +134,8 @@ class Blockchain:
             return False
 
     def mine_block(self):
+        if self.hosting_node is None or self.chain is None:
+            return False
         last_block = self._chain[-1]
         hashed_block = hash_block(last_block)
         proof = self.proof_of_work()
