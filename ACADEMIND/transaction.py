@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from ACADEMIND.printable import Printable
+from ACADEMIND.utility.printable import Printable
 
 
 class Transaction(Printable):

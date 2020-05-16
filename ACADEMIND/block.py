@@ -1,5 +1,5 @@
 from time import time
-from ACADEMIND.printable import Printable
+from ACADEMIND.utility.printable import Printable
 
 
 class Block(Printable):
@@ -9,4 +9,3 @@ class Block(Printable):
         self.timestamp = timestamp
         self.transactions = transactions
         self.proof = proof
-

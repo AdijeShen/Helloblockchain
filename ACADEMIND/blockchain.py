@@ -1,11 +1,11 @@
 from functools import reduce
 import json
-from ACADEMIND.hash_util import hash_block
+from ACADEMIND.utility.hash_util import hash_block
 from ACADEMIND.block import Block
 from ACADEMIND.transaction import Transaction
 
 # from time import time
-from ACADEMIND.verification import Verification
+from ACADEMIND.utility.verification import Verification
 
 MINING_REWARD = 10.0
 

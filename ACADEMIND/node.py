@@ -1,4 +1,4 @@
-from ACADEMIND.verification import Verification
+from ACADEMIND.utility.verification import Verification
 from ACADEMIND.blockchain import Blockchain
 
 
