@@ -1,6 +1,20 @@
 from ACADEMIND.verification import Verification
 from ACADEMIND.blockchain import Blockchain
-from uuid import uuid4
+
+
+def get_transaction_value():
+    tx_recipient = input("Enter the recipient of the transaction: ")
+    user_input = float(input("Your transaction mount: "))
+    return tx_recipient, user_input
+
+
+def get_user_choice():
+    user_input = input("Your Choice:")
+    return user_input
+
+
+def get_user_input():
+    return input("Input the transaction amount: ")
 
 
 class Node:
@@ -8,13 +22,6 @@ class Node:
         # self.id = str(uuid4())
         self.id = "Adije"
         self.blockchain = Blockchain(self.id)
-
-    def get_user_input(self):
-        return input("Input the transaction amount: ")
-
-    def get_user_choice(self):
-        user_input = input("Your Choice:")
-        return user_input
 
     def print_blockchain_elements(self):
         """
@@ -26,11 +33,6 @@ class Node:
             print(block)
         print('-' * 30)
 
-    def get_transaction_value(self):
-        tx_recipient = input("Enter the recipient of the transaction: ")
-        user_input = float(input("Your transaction mount: "))
-        return tx_recipient, user_input
-
     def listen_for_input(self):
         waiting_for_input = True
         while waiting_for_input:
@@ -40,20 +42,21 @@ class Node:
             print("3: Output the blockchain blocks")
             print("4: Check transaction validity")
             print("q: Quit")
-            user_choice = self.get_user_choice()
+            user_choice = get_user_choice()
             if user_choice == "1":
-                recipient, amount = self.get_transaction_value()
+                recipient, amount = get_transaction_value()
                 if self.blockchain.add_transaction(sender=self.id, recipient=recipient, amount=amount):
                     print("Added transaction!")
                 else:
                     print("Transaction Fail!")
-                print(self.blockchain.open_transactions)
+                print(self.blockchain.get_open_transactions())
             elif user_choice == "2":
                 self.blockchain.mine_block()
             elif user_choice == "3":
                 self.print_blockchain_elements()
             elif user_choice == "4":
-                if Verification.verify_transactions(self.blockchain.open_transactions, self.blockchain.get_balance):
+                if Verification.verify_transactions(self.blockchain.get_open_transactions(),
+                                                    self.blockchain.get_balance):
                     print("Transactions all valid")
                 else:
                     print("There are invalid transactions")
