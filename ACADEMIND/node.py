@@ -3,27 +3,27 @@ from ACADEMIND.blockchain import Blockchain
 from ACADEMIND.wallet import Wallet
 
 
-def get_transaction_value():
-    tx_recipient = input("Enter the recipient of the transaction: ")
-    user_input = float(input("Your transaction mount: "))
-    return tx_recipient, user_input
-
-
-def get_user_choice():
-    user_input = input("Your Choice:")
-    return user_input
-
-
-def get_user_input():
-    return input("Input the transaction amount: ")
-
-
 class Node:
     def __init__(self):
         # self.id = str(uuid4())
         self.wallet = Wallet()
         self.wallet.create_keys()
         self.blockchain = Blockchain(self.wallet.public_key)
+
+    @staticmethod
+    def get_transaction_value():
+        tx_recipient = input("Enter the recipient of the transaction: ")
+        user_input = float(input("Your transaction mount: "))
+        return tx_recipient, user_input
+
+    @staticmethod
+    def get_user_choice():
+        user_input = input("Your Choice:")
+        return user_input
+
+    @staticmethod
+    def get_user_input():
+        return input("Input the transaction amount: ")
 
     def print_blockchain_elements(self):
         """
@@ -47,10 +47,13 @@ class Node:
             print("6: Load wallet")
             print("7: Save wallet")
             print("q: Quit")
-            user_choice = get_user_choice()
+            user_choice = self.get_user_choice()
             if user_choice == "1":
-                recipient, amount = get_transaction_value()
-                if self.blockchain.add_transaction(sender=self.wallet.public_key, recipient=recipient, amount=amount):
+                recipient, amount = self.get_transaction_value()
+                signature = self.wallet.sign_transaction(sender=self.wallet.public_key, recipient=recipient,
+                                                         amount=amount)
+                if self.blockchain.add_transaction(sender=self.wallet.public_key, recipient=recipient, amount=amount,
+                                                   signature=signature):
                     print("Added transaction!")
                 else:
                     print("Transaction Fail!")
@@ -81,7 +84,7 @@ class Node:
             if not Verification.verify_blockchain(self.blockchain.chain):
                 print("Invalid blockchain!")
                 break
-            print("Balance of {}:{:6.2f}".format(self.wallet.public_key, self.blockchain.get_balance()))
+            print("Balance of {}\nis {:6.2f}".format(self.wallet.public_key, self.blockchain.get_balance()))
         else:
             print("User left")
         print("Done!")

@@ -1,4 +1,6 @@
 from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA256
 import Crypto.Random
 import binascii
 
@@ -9,7 +11,7 @@ class Wallet:
         self.public_key = None
 
     def create_keys(self):
-        private_key, public_key = self.generate_keys()
+        public_key, private_key = self.generate_keys()
         self.private_key = private_key
         self.public_key = public_key
 
@@ -34,9 +36,23 @@ class Wallet:
             except (IOError, IndexError):
                 print("Saving wallet failed...")
 
-    def generate_keys(self):
+    @staticmethod
+    def generate_keys():
         private_key = RSA.generate(1024, Crypto.Random.new().read)
         public_key = private_key.publickey()
         stringed_public_key = binascii.hexlify(public_key.export_key(format='DER')).decode('ascii')
         stringed_private_key = binascii.hexlify(private_key.export_key(format='DER')).decode('ascii')
         return stringed_public_key, stringed_private_key
+
+    def sign_transaction(self, sender, recipient, amount):
+        signer = PKCS1_v1_5.new(RSA.importKey(binascii.unhexlify(self.private_key)))
+        h = SHA256.new((str(sender) + str(recipient) + str(amount)).encode('utf8'))
+        signature = signer.sign(h)
+        return binascii.hexlify(signature).decode('ascii')
+
+    @staticmethod
+    def verify_transaction(transaction):
+        public_key = RSA.importKey(binascii.unhexlify(transaction.sender))
+        verifier = PKCS1_v1_5.new(public_key)
+        h = SHA256.new((str(transaction.sender) + str(transaction.recipient) + str(transaction.amount)).encode('utf8'))
+        return verifier.verify(h, binascii.unhexlify(transaction.signature))
